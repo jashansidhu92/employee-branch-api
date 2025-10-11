@@ -37,28 +37,41 @@ app.get("/api/v1/portfolio/performance", (req: Request, res: Response) => {
   res.status(200).json(result);
 });
 
+app.get("/api/v1/portfolio/largest-holding", (req: Request, res: Response) => {
+  const queryAssets = req.query.assets as string;
 
-app.post("/api/v1/portfolio/largest-holding", (req: Request, res: Response) => {
-  const assets: Asset[] = req.body;
-
-  if (!Array.isArray(assets) || assets.length === 0) {
-    return res.status(400).json({ error: "Please provide an array of assets with 'name' and 'value' properties." });
+  if (!queryAssets) {
+    return res.status(400).json({
+      error:
+        "Please provide assets as query parameters, e.g. ?assets=Stocks:8000,Bonds:2000",
+    });
   }
+
+  const assets = queryAssets.split(",").map((pair) => {
+    const [name, value] = pair.split(":");
+    return { name, value: Number(value) };
+  });
 
   const result = findLargestHolding(assets);
   res.status(200).json(result);
 });
 
 
-app.post("/api/v1/portfolio/allocation", (req: Request, res: Response) => {
-  const assets: Asset[] = req.body;
+app.get("/api/v1/portfolio/allocation", (req: Request, res: Response) => {
+  const queryAssets = req.query.assets as string;
 
-  if (!Array.isArray(assets) || assets.length === 0) {
-    return res.status(400).json({ error: "Please provide an array of assets with 'name' and 'value' properties." });
+  if (!queryAssets) {
+    return res.status(400).json({
+      error: "Please provide assets in the query, e.g. ?assets=Stocks:8000,Bonds:2000",
+    });
   }
+
+  const assets = queryAssets.split(",").map((pair) => {
+    const [name, value] = pair.split(":");
+    return { name, value: Number(value) };
+  });
 
   const result = calculateAssetAllocation(assets);
   res.status(200).json(result);
 });
-
 export default app;
