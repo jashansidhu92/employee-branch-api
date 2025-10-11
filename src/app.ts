@@ -13,6 +13,9 @@ app.get("/", (req: Request, res: Response) => {
   res.json({ message: "API is running successfully 🚀" });
 });
 
+/**
+ * URL: http://localhost:3000/api/v1/health
+ */
 app.get("/api/v1/health", (req: Request, res: Response) => {
   const healthData = {
     status: "OK",
@@ -24,54 +27,81 @@ app.get("/api/v1/health", (req: Request, res: Response) => {
   res.status(200).json(healthData);
 });
 
-
+/**
+ * http://localhost:3000/api/v1/portfolio/performance?initial=10000&current=12500
+ */
 app.get("/api/v1/portfolio/performance", (req: Request, res: Response) => {
   const initialInvestment = Number(req.query.initial);
   const currentValue = Number(req.query.current);
 
   if (isNaN(initialInvestment) || isNaN(currentValue)) {
-    return res.status(400).json({ error: "Please provide valid 'initial' and 'current' numeric query parameters." });
+    return res.status(400).json({
+      error: "Please provide valid 'initial' and 'current' numeric query parameters.",
+    });
   }
 
   const result = calculatePortfolioPerformance(initialInvestment, currentValue);
   res.status(200).json(result);
 });
 
+/**
+ * http://localhost:3000/api/v1/portfolio/largest-holding?assets=Stocks:8000,Bonds:2000,House:15000
+ */
 app.get("/api/v1/portfolio/largest-holding", (req: Request, res: Response) => {
   const queryAssets = req.query.assets as string;
 
   if (!queryAssets) {
     return res.status(400).json({
       error:
-        "Please provide assets as query parameters, e.g. ?assets=Stocks:8000,Bonds:2000",
+        "Please provide assets as query parameters, e.g. ?assets=Stocks:8000,Bonds:2000,House:15000",
     });
   }
 
-  const assets = queryAssets.split(",").map((pair) => {
+  const assets: Asset[] = queryAssets.split(",").map((pair) => {
     const [name, value] = pair.split(":");
     return { name, value: Number(value) };
   });
 
+  if (assets.some((a) => isNaN(a.value))) {
+    return res.status(400).json({
+      error: "All asset values must be valid numbers.",
+    });
+  }
+
   const result = findLargestHolding(assets);
+  if (!result) {
+    return res.status(400).json({ error: "No valid assets provided." });
+  }
+
   res.status(200).json(result);
 });
 
-
+/**
+ * http://localhost:3000/api/v1/portfolio/allocation?assets=Stocks:8000,Bonds:2000,RealEstate:15000
+ */
 app.get("/api/v1/portfolio/allocation", (req: Request, res: Response) => {
   const queryAssets = req.query.assets as string;
 
   if (!queryAssets) {
     return res.status(400).json({
-      error: "Please provide assets in the query, e.g. ?assets=Stocks:8000,Bonds:2000",
+      error:
+        "Please provide assets in the query, e.g. ?assets=Stocks:8000,Bonds:2000,RealEstate:15000",
     });
   }
 
-  const assets = queryAssets.split(",").map((pair) => {
+  const assets: Asset[] = queryAssets.split(",").map((pair) => {
     const [name, value] = pair.split(":");
     return { name, value: Number(value) };
   });
 
+  if (assets.some((a) => isNaN(a.value))) {
+    return res.status(400).json({
+      error: "All asset values must be valid numbers.",
+    });
+  }
+
   const result = calculateAssetAllocation(assets);
   res.status(200).json(result);
 });
+
 export default app;
