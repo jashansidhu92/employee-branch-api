@@ -54,3 +54,28 @@ describe("Employee API CRUD", () => {
     expect(res.body).toHaveProperty("message", "Employee deleted successfully");
   });
 });
+describe("Employee Logical Endpoints", () => {
+  it("should return all employees for a valid branch ID", async () => {
+    const res = await request(app).get("/api/v1/employees/branch/2");
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body.every((emp: any) => emp.branchId === 2)).toBe(true);
+  });
+
+  it("should return 400 for invalid branch ID", async () => {
+    const res = await request(app).get("/api/v1/employees/branch/invalid");
+    expect(res.status).toBe(400);
+  });
+
+  it("should return employees in a valid department", async () => {
+    const res = await request(app).get("/api/v1/employees/department/Loans");
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body.every((emp: any) => emp.department === "Loans")).toBe(true);
+  });
+
+  it("should return 404 if no employees found in department", async () => {
+    const res = await request(app).get("/api/v1/employees/department/UnknownDept");
+    expect(res.status).toBe(404);
+  });
+});

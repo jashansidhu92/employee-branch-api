@@ -33,3 +33,13 @@ export const deleteEmployee = (id: number): boolean => {
   employees.splice(index, 1);
   return true;
 };
+export const getEmployeesByBranch = (branchId: number): Employee[] => {
+  return employees.filter((emp) => emp.branchId === branchId);
+};
+
+export const getEmployeesByDepartment = (department: string): Employee[] => {
+  const deptLower = department.toLowerCase();
+  return employees.filter(
+    (emp) => emp.department.toLowerCase() === deptLower
+  );
+};

@@ -54,3 +54,31 @@ export const deleteEmployee = (req: Request, res: Response) => {
 
   res.status(200).json({ message: "Employee deleted successfully" });
 };
+// ✅ GET all employees for a branch
+export const getEmployeesByBranch = (req: Request, res: Response) => {
+  const branchId = Number(req.params.branchId);
+  if (isNaN(branchId)) {
+    return res.status(400).json({ error: "Invalid branch ID parameter" });
+  }
+
+  const result = employeeService.getEmployeesByBranch(branchId);
+  if (!result.length)
+    return res.status(404).json({ message: "No employees found for this branch" });
+
+  res.status(200).json(result);
+};
+
+export const getEmployeesByDepartment = (req: Request, res: Response) => {
+  const { department } = req.params;
+  if (!department) {
+    return res
+      .status(400)
+      .json({ error: "Missing required department parameter" });
+  }
+
+  const result = employeeService.getEmployeesByDepartment(department);
+  if (!result.length)
+    return res.status(404).json({ message: "No employees found in this department" });
+
+  res.status(200).json(result);
+};
