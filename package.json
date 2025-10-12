@@ -2,18 +2,17 @@
   "name": "back_end_assignment_1",
   "version": "1.0.0",
   "main": "index.js",
-"scripts": {
-  "dev": "ts-node src/server.ts",
-  "test": "jest --passWithNoTests"
+  "scripts": {
+    "dev": "ts-node src/server.ts",
+    "test": "jest --passWithNoTests"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/jest": "^30.0.0",
-    "@types/node": "^24.7.1",
+    "@types/node": "^24.7.2",
     "@types/supertest": "^6.0.3",
     "jest": "^30.2.0",
     "supertest": "^7.1.4",
@@ -22,6 +21,11 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "express": "^5.1.0"
-  }
+    "express": "^5.1.0",
+    "morgan": "^1.10.1"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "description": ""
 }
