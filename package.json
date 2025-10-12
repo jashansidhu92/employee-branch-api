@@ -3,15 +3,17 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node src/server.ts",
-    "test": "jest --passWithNoTests"
-  },
+  "start": "node dist/server.js",
+  "build": "tsc",
+  "dev": "ts-node src/server.ts"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/jest": "^30.0.0",
+    "@types/morgan": "^1.9.10",
     "@types/node": "^24.7.2",
     "@types/supertest": "^6.0.3",
     "jest": "^30.2.0",
