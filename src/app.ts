@@ -1,7 +1,9 @@
 import express, { Request, Response } from "express";
 import morgan from "morgan";
+import employeeRoutes from "./api/v1/routes/employeeRoutes"; 
 
 const app = express();
+
 app.use(express.json());
 app.use(morgan("combined"));
 
@@ -12,5 +14,7 @@ app.get("/health", (req: Request, res: Response) => {
 app.get("/", (req: Request, res: Response) => {
   res.json({ message: "PiXELL-River Employee & Branch API is running 🚀" });
 });
+
+app.use("/api/v1/employees", employeeRoutes);
 
 export default app;
