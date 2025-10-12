@@ -5,6 +5,6 @@ if (!admin.apps.length) {
     credential: admin.credential.applicationDefault(),
   });
 }
-
 export const db = admin.firestore();
-export type FirestoreDb = FirebaseFirestore.Firestore;
+
+export type FirestoreDb = admin.firestore.Firestore;

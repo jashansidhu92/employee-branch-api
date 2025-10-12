@@ -1,18 +1,10 @@
-jest.mock("../config/firebase", () => ({
+jest.mock("../config/firebaseConfig", () => ({
+  auth: {
+    verifyIdToken: jest.fn(),
+    getUser: jest.fn(),
+  },
   db: {
-    collection: jest.fn(() => ({
-      doc: jest.fn(() => ({
-        get: jest.fn(),
-        set: jest.fn(),
-        update: jest.fn(),
-        delete: jest.fn(),
-      })),
-      add: jest.fn(),
-      get: jest.fn(),
-      where: jest.fn(() => ({
-        get: jest.fn(),
-      })),
-    })),
+    collection: jest.fn(),
     runTransaction: jest.fn(),
     batch: jest.fn(),
   },

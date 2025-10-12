@@ -1,48 +1,70 @@
 import { Request, Response } from "express";
 import * as branchService from "../services/branchService";
+import { ApiResponse } from "../models/api";
+import { Branch } from "../models/branch";
 
-export const getAllBranches = (req: Request, res: Response) => {
-  const allBranches = branchService.getAllBranches();
-  res.status(200).json(allBranches);
-};
-
-export const getBranchById = (req: Request, res: Response) => {
-  const id = Number(req.params.id);
-  if (isNaN(id)) return res.status(400).json({ error: "Invalid ID parameter" });
-
-  const branch = branchService.getBranchById(id);
-  if (!branch) return res.status(404).json({ error: "Branch not found" });
-
-  res.status(200).json(branch);
-};
-
-export const createBranch = (req: Request, res: Response) => {
-  const { name, address, phone } = req.body;
-  if (!name || !address || !phone) {
-    return res.status(400).json({ error: "Missing required branch fields" });
+export const getAll = async (
+  _req: Request,
+  res: Response<ApiResponse<Branch[]>>
+) => {
+  try {
+    const branches = await branchService.all();
+    res.status(200).json({ success: true, data: branches });
+  } catch {
+    res.status(500).json({ success: false, error: "Failed to retrieve branches" });
   }
-
-  const newBranch = branchService.createBranch({ name, address, phone });
-  res.status(201).json(newBranch);
 };
 
-export const updateBranch = (req: Request, res: Response) => {
-  const id = Number(req.params.id);
-  if (isNaN(id)) return res.status(400).json({ error: "Invalid ID parameter" });
-
-  const updatedBranch = branchService.updateBranch(id, req.body);
-  if (!updatedBranch)
-    return res.status(404).json({ error: "Branch not found" });
-
-  res.status(200).json(updatedBranch);
+export const getById = async (
+  req: Request,
+  res: Response<ApiResponse<Branch>>
+) => {
+  try {
+    const branch = await branchService.byId(req.params.id);
+    if (!branch)
+      return res.status(404).json({ success: false, error: "Branch not found" });
+    res.status(200).json({ success: true, data: branch });
+  } catch {
+    res.status(500).json({ success: false, error: "Error retrieving branch" });
+  }
 };
 
-export const deleteBranch = (req: Request, res: Response) => {
-  const id = Number(req.params.id);
-  if (isNaN(id)) return res.status(400).json({ error: "Invalid ID parameter" });
+export const create = async (
+  req: Request,
+  res: Response<ApiResponse<Branch>>
+) => {
+  try {
+    const newBranch = await branchService.create(req.body);
+    res.status(201).json({ success: true, data: newBranch });
+  } catch {
+    res.status(500).json({ success: false, error: "Failed to create branch" });
+  }
+};
 
-  const deleted = branchService.deleteBranch(id);
-  if (!deleted) return res.status(404).json({ error: "Branch not found" });
+export const update = async (
+  req: Request,
+  res: Response<ApiResponse<Branch>>
+) => {
+  try {
+    const updatedBranch = await branchService.update(req.params.id, req.body);
+    if (!updatedBranch)
+      return res.status(404).json({ success: false, error: "Branch not found" });
+    res.status(200).json({ success: true, data: updatedBranch });
+  } catch {
+    res.status(500).json({ success: false, error: "Failed to update branch" });
+  }
+};
 
-  res.status(200).json({ message: "Branch deleted successfully" });
+export const remove = async (req: Request, res: Response<ApiResponse<any>>) => {
+  try {
+    const deleted = await branchService.remove(req.params.id);
+    if (!deleted)
+      return res.status(404).json({ success: false, error: "Branch not found" });
+    res.status(200).json({
+      success: true,
+      data: { message: "Branch deleted successfully" },
+    });
+  } catch {
+    res.status(500).json({ success: false, error: "Failed to delete branch" });
+  }
 };

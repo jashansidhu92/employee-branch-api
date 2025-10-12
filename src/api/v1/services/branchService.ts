@@ -1,35 +1,31 @@
-import { branches, Branch } from "../../../data/branches";
+import { Branch } from "../models/branch";
 
-export const getAllBranches = (): Branch[] => {
-  return branches;
+let branches: Branch[] = [];
+
+export const all = async (): Promise<Branch[]> => branches;
+
+export const byId = async (id: string): Promise<Branch | null> => {
+  return branches.find((b) => b.id === id) || null;
 };
 
-export const getBranchById = (id: number): Branch | undefined => {
-  return branches.find((b) => b.id === id);
-};
-
-export const createBranch = (data: Omit<Branch, "id">): Branch => {
-  const newBranch: Branch = {
-    id: branches.length ? branches[branches.length - 1].id + 1 : 1,
-    ...data,
-  };
+export const create = async (data: Omit<Branch, "id">): Promise<Branch> => {
+  const newBranch: Branch = { id: Date.now().toString(), ...data };
   branches.push(newBranch);
   return newBranch;
 };
 
-export const updateBranch = (
-  id: number,
+export const update = async (
+  id: string,
   updates: Partial<Branch>
-): Branch | undefined => {
+): Promise<Branch | null> => {
   const index = branches.findIndex((b) => b.id === id);
-  if (index === -1) return undefined;
+  if (index === -1) return null;
   branches[index] = { ...branches[index], ...updates };
   return branches[index];
 };
 
-export const deleteBranch = (id: number): boolean => {
-  const index = branches.findIndex((b) => b.id === id);
-  if (index === -1) return false;
-  branches.splice(index, 1);
-  return true;
+export const remove = async (id: string): Promise<boolean> => {
+  const initialLength = branches.length;
+  branches = branches.filter((b) => b.id !== id);
+  return branches.length < initialLength;
 };
