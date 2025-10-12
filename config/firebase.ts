@@ -1,10 +1,12 @@
 import admin from "firebase-admin";
+import path from "path";
+
+const serviceAccountPath = path.join(__dirname, "../../serviceAccountKey.json");
 
 if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
+    credential: admin.credential.cert(serviceAccountPath),
   });
 }
-export const db = admin.firestore();
 
-export type FirestoreDb = admin.firestore.Firestore;
+export const db = admin.firestore();
