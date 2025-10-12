@@ -2,34 +2,28 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ development, main ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main, development ]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🛠️ Checkout repository
+      - name: 🛎️ Checkout repository
         uses: actions/checkout@v4
 
-      - name: 🧩 Set up Node.js
+      - name: ⚙️ Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
 
       - name: 📦 Install dependencies
-        run: npm ci
+        run: npm install
 
-      - name: 🧹 Run ESLint
-        run: |
-          if [ -f eslint.config.mjs ]; then
-            npx eslint src --max-warnings=0 || true
-          else
-            echo "No ESLint config found — skipping lint step."
-          fi
-
-      - name: 🧪 Run tests
+      - name: 🧪 Run Jest tests
         run: npm test
+
+      - name: ✅ Lint code (optional)
+        run: npx eslint . || echo "Lint check skipped"
