@@ -1,21 +1,17 @@
 import { db } from "../../../../config/firebase";
 
-export class FirestoreRepository<T extends { [key: string]: any }> {
-  private collectionName: string;
-
-  constructor(collectionName: string) {
-    this.collectionName = collectionName;
-  }
+export class FirestoreRepository<T extends { [k: string]: any }> {
+  constructor(private collectionName: string) {}
 
   async createDocument(data: T): Promise<T & { id: string }> {
-    const docRef = await db.collection(this.collectionName).add(data);
-    const snapshot = await docRef.get();
-    return { id: snapshot.id, ...snapshot.data() } as T & { id: string };
-  }
+    const ref = await db.collection(this.collectionName).add(data);
+    const snap = await ref.get();
+    return { id: snap.id, ...snap.data() } as T & { id: string };
+    }
 
   async getDocuments(): Promise<(T & { id: string })[]> {
     const snapshot = await db.collection(this.collectionName).get();
-    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as (T & { id: string })[];
+    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as T & { id: string }));
   }
 
   async getDocumentById(id: string): Promise<(T & { id: string }) | null> {
@@ -25,21 +21,19 @@ export class FirestoreRepository<T extends { [key: string]: any }> {
   }
 
   async updateDocument(id: string, data: Partial<T>): Promise<(T & { id: string }) | null> {
-    const docRef = db.collection(this.collectionName).doc(id);
-    const existing = await docRef.get();
+    const ref = db.collection(this.collectionName).doc(id);
+    const existing = await ref.get();
     if (!existing.exists) return null;
-
-    await docRef.update(data);
-    const updated = await docRef.get();
+    await ref.update(data);
+    const updated = await ref.get();
     return { id: updated.id, ...updated.data() } as T & { id: string };
   }
 
   async deleteDocument(id: string): Promise<boolean> {
-    const docRef = db.collection(this.collectionName).doc(id);
-    const existing = await docRef.get();
+    const ref = db.collection(this.collectionName).doc(id);
+    const existing = await ref.get();
     if (!existing.exists) return false;
-
-    await docRef.delete();
+    await ref.delete();
     return true;
   }
 }
