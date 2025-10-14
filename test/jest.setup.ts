@@ -1,44 +1,26 @@
-jest.mock("../config/firebase", () => ({
-  auth: {
-    verifyIdToken: jest.fn(),
-    getUser: jest.fn(),
-  },
-  db: {
-    collection: jest.fn(() => ({
-      add: jest.fn(async () => ({
-        id: "mocked-id",
-        get: async () => ({
-          id: "mocked-id",
-          data: () => ({ name: "Mocked Document" }),
-        }),
-      })),
-      get: jest.fn(async () => ({
-        docs: [
-          {
-            id: "mocked-doc",
-            data: () => ({ name: "Mocked Data" }),
-          },
-        ],
-      })),
-      doc: jest.fn(() => ({
-        get: jest.fn(async () => ({
-          exists: true,
-          id: "mocked-doc",
-          data: () => ({ name: "Mocked Data" }),
-        })),
-        update: jest.fn(async () => {}),
-        delete: jest.fn(async () => {}),
-      })),
-    })),
-    runTransaction: jest.fn(),
-    batch: jest.fn(),
-  },
+jest.mock("../src/config/firebaseConfig", () => ({
+auth: {
+verifyIdToken: jest.fn(),
+getUser: jest.fn(),
+},
+db: {
+collection: jest.fn(() => ({
+add: jest.fn(),
+get: jest.fn(),
+doc: jest.fn(() => ({
+get: jest.fn(),
+update: jest.fn(),
+delete: jest.fn(),
+})),
+where: jest.fn(() => ({ get: jest.fn() })),
+})),
+},
 }));
 
 afterEach(() => {
-  jest.clearAllMocks();
+jest.clearAllMocks();
 });
 
 afterAll(() => {
-  jest.resetModules();
+jest.resetModules();
 });

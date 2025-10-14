@@ -1,4 +1,8 @@
 node_modules
-dist
 .env
-serviceAccountKey.json
+serviceAccount.json
+coverage
+.dist
+build
+dist
+.firebase
