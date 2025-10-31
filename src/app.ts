@@ -1,31 +1,24 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
-import branchRoutes from "./api/v1/routes/branch.routes";
-import employeeRoutes from "./api/v1/routes/employee.routes";
+import express from 'express';
+import morgan from 'morgan';
+import { errorHandler, notFound } from './middleware/error.middleware.js';
+import loansRoutes from './api/v1/routes/loans.routes.js';
+import adminRoutes from './api/v1/routes/admin.routes.js';
 
 
-dotenv.config();
-
-
+export function createApp() {
 const app = express();
-app.use(cors());
 app.use(express.json());
+app.use(morgan('dev'));
 
 
-app.get("/health", (_req, res) => {
-res.status(200).json({ status: "ok" });
-});
+app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
 
-app.use("/api/v1/branches", branchRoutes);
-app.use("/api/v1/employees", employeeRoutes);
+app.use('/api/v1/loans', loansRoutes);
+app.use('/api/v1/admin', adminRoutes);
 
 
-app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-console.error("Unhandled error:", err);
-res.status(err?.status || 500).json({ success: false, error: err?.message || "Internal Server Error" });
-});
-
-
-export default app;
+app.use(notFound);
+app.use(errorHandler);
+return app;
+}
